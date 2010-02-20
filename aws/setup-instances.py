@@ -47,9 +47,10 @@ def open_ssh_pipe(url):
 
 
 def find_instances():
+    look_for = KEYPAIR.split('.')[0]
     p = Popen(["%s/ec2-describe-instances" % EC2BIN], stdout = PIPE)
     return [i for i in re.findall("INSTANCE\t(.+?)\t.*?\t(.+?)\t.*"\
-        "running\t%s.*" % KEYPAIR, p.stdout.read())]
+        "running\t%s.*" % look_for, p.stdout.read())]
 
 
 def process_instances(instances, op, m):
@@ -180,7 +181,7 @@ if __name__ == "__main__":
             "or wait for a while if they are pending.")
     
     if len(sys.argv) > 2:
-        MASTER = sys.argv[1]
+        MASTER = sys.argv[2]
         m = [(i, url) for i, url in instances if i == MASTER]
         if not m:
             die("Could not find the master instance %s." % MASTER)
